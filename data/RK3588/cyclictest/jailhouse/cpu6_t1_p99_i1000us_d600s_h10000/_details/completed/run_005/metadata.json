@@ -1,0 +1,99 @@
+{
+  "status": "completed",
+  "condition": "cpu6_t1_p99_i1000us_d600s_h10000",
+  "run_index": 1,
+  "run_count": 1,
+  "reboot_policy": "each-run",
+  "updated_at": "2026-08-17T21:58:19.019140+08:00",
+  "serial_transcript": "data/RK3588/cyclictest/jailhouse/cpu6_t1_p99_i1000us_d600s_h10000/_details/completed/run_005/serial.log",
+  "configuration": {
+    "serial": {
+      "port": "COM10",
+      "baudrate": 115200,
+      "bytesize": 8,
+      "parity": "N",
+      "stopbits": 1,
+      "read_timeout": 0.1,
+      "write_timeout": 2.0,
+      "show_output": true
+    },
+    "environment_name": "jailhouse",
+    "environment": {
+      "boot_command": "run boot_oee",
+      "login_prompt": "tl3588 login:\\s*$",
+      "nonroot_login_prompt": "[A-Za-z0-9_.-]+ login:\\s*$",
+      "username": "root",
+      "rootcell_ip": "202.197.67.50",
+      "rootcell_netmask": null,
+      "module_load_command": "insmod jailhouse.ko",
+      "module_settle_seconds": 20,
+      "ssh": {
+        "host": "202.197.67.50",
+        "port": 22,
+        "username": "root",
+        "password": "<redacted>",
+        "key_file": null,
+        "connect_timeout": 60,
+        "retry_interval": 2,
+        "allow_agent": true,
+        "look_for_keys": true,
+        "progress_interval": 10
+      },
+      "enable_command": "jailhouse enable /usr/share/jailhouse/cells/tl3588.cell",
+      "linux_command": "jailhouse cell linux /usr/share/jailhouse/cells/tl3588-linux-demo.cell ./Image -d /usr/share/jailhouse/cells/dts/inmate-tl3588.dtb -i new_phytium_rootfs.cpio.gz -c \"isolcpus=3 rcu_nocb=3\"",
+      "nonroot_username": "root",
+      "nonroot_password": "<redacted>",
+      "nonroot_boot_timeout": 180,
+      "nonroot_cmdline_markers": [
+        "isolcpus=3",
+        "rcu_nocb=3"
+      ],
+      "boot_max_attempts": 3,
+      "boot_retry_delay_seconds": 1.0
+    },
+    "experiment_name": "cyclictest",
+    "experiment": {
+      "binary": "./cyclictest",
+      "cpu": 6,
+      "threads": 1,
+      "priority": 99,
+      "interval_us": 1000,
+      "duration_seconds": 600,
+      "histogram_limit_us": 10000,
+      "grace_seconds": 60,
+      "cleanup_remote": true,
+      "stress_binary": "./stress-ng",
+      "stress_cpus": "6",
+      "stress_vm_workers": 1,
+      "stress_vm_bytes": "256M"
+    },
+    "timeouts": {
+      "probe": 2,
+      "uboot": 60,
+      "boot": 180,
+      "login": 30
+    },
+    "reboot": {
+      "ssh": {
+        "host": "202.197.67.50",
+        "port": 22,
+        "username": "root",
+        "password": "<redacted>",
+        "key_file": null,
+        "connect_timeout": 8,
+        "retry_interval": 1,
+        "allow_agent": true,
+        "look_for_keys": true,
+        "progress_interval": 10
+      },
+      "allow_serial_fallback": false,
+      "nonroot_login_prompt": "[A-Za-z0-9_.-]+ login:\\s*$",
+      "nonroot_username": "root",
+      "nonroot_password": "<redacted>",
+      "nonroot_cmdline_markers": [
+        "isolcpus=3",
+        "rcu_nocb=3"
+      ]
+    }
+  }
+}

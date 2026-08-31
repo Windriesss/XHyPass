@@ -1,0 +1,264 @@
+{
+  "platform": {
+    "name": "RK3588",
+    "ready": true
+  },
+  "serial": {
+    "port": "COM10",
+    "baudrate": 115200,
+    "bytesize": 8,
+    "parity": "N",
+    "stopbits": 1,
+    "read_timeout": 0.1,
+    "write_timeout": 2.0,
+    "show_output": true
+  },
+  "int_latency": {
+    "control_serial": {
+      "port": "COM10",
+      "baudrate": 115200
+    },
+    "rtos_serial": {
+      "port": "COM14",
+      "baudrate": 115200
+    }
+  },
+  "timeouts": {
+    "probe": 2,
+    "uboot": 60,
+    "boot": 180,
+    "login": 30
+  },
+  "reboot": {
+    "ssh": {
+      "host": "202.197.67.50",
+      "port": 22,
+      "username": "root",
+      "password": "",
+      "key_file": null,
+      "connect_timeout": 8,
+      "retry_interval": 1,
+      "allow_agent": true,
+      "look_for_keys": true,
+      "progress_interval": 10
+    },
+    "allow_serial_fallback": false,
+    "nonroot_login_prompt": "[A-Za-z0-9_.-]+ login:\\s*$",
+    "nonroot_username": "root",
+    "nonroot_password": "",
+    "nonroot_cmdline_markers": [
+      "isolcpus=3",
+      "rcu_nocb=3"
+    ]
+  },
+  "environments": {
+    "bare": {
+      "boot_command": "run boot_oee",
+      "int_latency_ready": true,
+      "int_latency_boot_commands": {
+        "idle": "run boot_rtos_idle",
+        "stress": "run boot_rtos_stress"
+      },
+      "boot_max_attempts": 3,
+      "boot_retry_delay_seconds": 1.0,
+      "boot_retry_patterns": [
+        "mmc fail to send stop cmd",
+        "Wrong Image Type for bootm command",
+        "ERROR -91: Protocol wrong type for socket",
+        "can't get kernel image"
+      ],
+      "reboot_command": "reboot",
+      "uboot_prompt": "=>\\s*$",
+      "reset_markers": [
+        "DDR V\\d",
+        "U-Boot SPL",
+        "U-Boot 20\\d\\d"
+      ],
+      "login_prompt": "tl3588 login:\\s*$",
+      "username": "root",
+      "shell_prompts": [
+        "root@[^\\r\\n]*#\\s*$",
+        "#\\s*$"
+      ]
+    },
+    "jailhouse": {
+      "boot_command": "run boot_oee",
+      "login_prompt": "tl3588 login:\\s*$",
+      "nonroot_login_prompt": "[A-Za-z0-9_.-]+ login:\\s*$",
+      "username": "root",
+      "rootcell_ip": "202.197.67.50",
+      "rootcell_netmask": null,
+      "module_load_command": "insmod jailhouse.ko",
+      "module_settle_seconds": 20,
+      "ssh": {
+        "host": "202.197.67.50",
+        "port": 22,
+        "username": "root",
+        "password": "",
+        "key_file": null,
+        "connect_timeout": 60,
+        "retry_interval": 2,
+        "allow_agent": true,
+        "look_for_keys": true,
+        "progress_interval": 10
+      },
+      "enable_command": "jailhouse enable /usr/share/jailhouse/cells/tl3588.cell",
+      "linux_command": "jailhouse cell linux /usr/share/jailhouse/cells/tl3588-linux-demo.cell ./Image -d /usr/share/jailhouse/cells/dts/inmate-tl3588.dtb -i new_phytium_rootfs.cpio.gz -c \"isolcpus=3 rcu_nocb=3\"",
+      "nonroot_username": "root",
+      "nonroot_password": "",
+      "nonroot_boot_timeout": 180,
+      "nonroot_cmdline_markers": [
+        "isolcpus=3",
+        "rcu_nocb=3"
+      ]
+    },
+    "xen_credit2": {
+      "environment_type": "xen",
+      "boot_command": "run boot_xen",
+      "boot_max_attempts": 3,
+      "boot_retry_delay_seconds": 1.0,
+      "boot_retry_patterns": [
+        "mmc fail to send stop cmd",
+        "Wrong Image Type for bootm command",
+        "ERROR -91: Protocol wrong type for socket",
+        "can't get kernel image"
+      ],
+      "reboot_command": "reboot",
+      "uboot_prompt": "=>\\s*$",
+      "reset_markers": [
+        "DDR V\\d",
+        "U-Boot SPL",
+        "U-Boot 20\\d\\d"
+      ],
+      "login_prompt": "tl3588 login:\\s*$",
+      "username": "root",
+      "shell_prompts": [
+        "root@[^\\r\\n]*#\\s*$",
+        "#\\s*$"
+      ],
+      "local_boot_files": {
+        "source_dir": "experiments/boot-artifacts/RK3588/Xen_credit2",
+        "target_dir": "experiments/deploy/RK3588"
+      },
+      "dom0_init_commands": [
+        "cd ~/dom-interrupt",
+        "sh set_bridge.sh",
+        "xl create compute_NN_dom1.cfg"
+      ],
+      "init_command_timeout": 60,
+      "ssh": {
+        "host": "202.197.67.50",
+        "port": 22,
+        "username": "root",
+        "password": "",
+        "key_file": null,
+        "connect_timeout": 60,
+        "retry_interval": 2,
+        "allow_agent": true,
+        "look_for_keys": true,
+        "progress_interval": 10
+      },
+      "dom0_pin_command": "xl vcpu-pin 0 0 0-5; xl vcpu-pin 0 1 0-5; xl vcpu-pin 0 2 0-5; xl vcpu-pin 0 3 0-5; xl vcpu-pin 0 4 0-5; xl vcpu-pin 0 5 0-5; xl vcpu-pin 0 6 6",
+      "dom1_pin_command": "xl vcpu-pin dom1 0 0-5; xl vcpu-pin dom1 1 0-5; xl vcpu-pin dom1 2 0-5; xl vcpu-pin dom1 3 0-5; xl vcpu-pin dom1 4 0-5; xl vcpu-pin dom1 5 0-5; xl vcpu-pin dom1 6 7",
+      "pin_verify_commands": [
+        "xl vcpu-list 0",
+        "xl vcpu-list dom1"
+      ],
+      "dom1_console_command": "xl console dom1",
+      "dom1_login_prompt": "[A-Za-z0-9_.-]+ login:\\s*$",
+      "dom1_username": "root",
+      "dom1_password": "",
+      "dom1_shell_prompts": [
+        "root@[^\\r\\n]*#\\s*$",
+        "#\\s*$"
+      ],
+      "dom1_boot_timeout": 180,
+      "post_dom1_login_delay_seconds": 10
+    },
+    "xen_credit2_WFX": {
+      "extends": "xen_credit2",
+      "local_boot_files": {
+        "source_dir": "experiments/boot-artifacts/RK3588/Xen_credit2_nativeWFX"
+      }
+    },
+    "XHyPass": {
+      "extends": "xen_credit2",
+      "int_latency_rto_enter_pattern": "(?:\\(XEN\\)\\s+enter_rto\\s+rc=0|\\(XEN\\)\\s+!+set gicv3 interrupt injection)",
+      "int_latency_reboot_ready_pattern": "(?:\\(XEN\\)\\s+exit_rto\\s+rc=0|\\(XEN\\)\\s+!+set gicv3 interrupt passthrough)",
+      "xhypass_module_file": "./interrupt_passthrough.ko",
+      "xhypass_module_load_args": "rto_cpu=6 event_sgi=7",
+      "local_boot_files": {
+        "source_dir": "experiments/boot-artifacts/RK3588/XHyPass"
+      },
+      "pre_experiment_commands": [
+        "cd ~ && test -f interrupt_passthrough.ko && if lsmod | awk '{print $1}' | grep -qx interrupt_passthrough; then echo '[XHYPASS] interrupt_passthrough already loaded'; else taskset -c 6 insmod ./interrupt_passthrough.ko rto_cpu=6 event_sgi=7; fi; lsmod | awk '{print $1}' | grep -qx interrupt_passthrough && echo __XHYPASS_RTO_READY__"
+      ],
+      "pre_experiment_success_marker": "__XHYPASS_RTO_READY__",
+      "post_module_load_delay_seconds": 2
+    },
+    "xen_null": {
+      "extends": "xen_credit2",
+      "local_boot_files": {
+        "source_dir": "experiments/boot-artifacts/RK3588/Xen_null"
+      },
+      "dom0_init_commands": [
+        "cd ~/dom-interrupt",
+        "xl vcpu-set 0 4",
+        "xl vcpu-pin 0 0 0; xl vcpu-pin 0 1 1; xl vcpu-pin 0 2 4; xl vcpu-pin 0 3 6",
+        "sh set_bridge.sh",
+        "xl create compute_NN_dom1_nullsched.cfg"
+      ],
+      "dom0_pin_command": "",
+      "dom0_init_post_delays_seconds": {
+        "xl vcpu-set 0 4": 2
+      },
+      "dom1_pin_command": "xl vcpu-pin dom1 0 2; xl vcpu-pin dom1 1 3; xl vcpu-pin dom1 2 5; xl vcpu-pin dom1 3 7",
+      "experiment_overrides": {
+        "cpu": 3,
+        "stress_cpus": "3"
+      }
+    },
+    "xen_null_WFX": {
+      "extends": "xen_null",
+      "local_boot_files": {
+        "source_dir": "experiments/boot-artifacts/RK3588/Xen_null_nativeWFX"
+      }
+    }
+  },
+  "experiments": {
+    "cyclictest": {
+      "binary": "./cyclictest",
+      "cpu": 6,
+      "threads": 1,
+      "priority": 99,
+      "interval_us": 1000,
+      "duration_seconds": 600,
+      "histogram_limit_us": 10000,
+      "grace_seconds": 60,
+      "cleanup_remote": true
+    },
+    "cyclictest-stress": {
+      "binary": "./cyclictest",
+      "cpu": 6,
+      "threads": 1,
+      "priority": 99,
+      "interval_us": 1000,
+      "duration_seconds": 600,
+      "histogram_limit_us": 10000,
+      "grace_seconds": 60,
+      "cleanup_remote": true,
+      "stress_binary": "./stress-ng",
+      "stress_cpus": "6",
+      "stress_vm_workers": 1,
+      "stress_vm_bytes": "256M"
+    },
+    "int-latency": {
+      "condition": "idle",
+      "duration_seconds": 600,
+      "timeout_seconds": 780,
+      "completion_not_before_ratio": 0.9,
+      "completion_settle_seconds": 5,
+      "completion_pattern": "PMU diff samples:\\s*600000"
+    }
+  }
+}

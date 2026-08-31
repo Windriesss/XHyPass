@@ -1,0 +1,130 @@
+{
+  "status": "completed",
+  "condition": "cpu6_t1_p99_i1000us_d600s_h10000",
+  "run_index": 1,
+  "run_count": 1,
+  "reboot_policy": "each-run",
+  "updated_at": "2026-08-15T00:05:42.017248+08:00",
+  "serial_transcript": "data/RK3588/cyclictest/XHyPass/cpu6_t1_p99_i1000us_d600s_h10000/_details/completed/run_004/serial.log",
+  "configuration": {
+    "serial": {
+      "port": "COM10",
+      "baudrate": 115200,
+      "bytesize": 8,
+      "parity": "N",
+      "stopbits": 1,
+      "read_timeout": 0.1,
+      "write_timeout": 2.0,
+      "show_output": true
+    },
+    "environment_name": "XHyPass",
+    "environment": {
+      "environment_type": "xen",
+      "boot_command": "run boot_xen",
+      "boot_max_attempts": 3,
+      "boot_retry_delay_seconds": 1.0,
+      "boot_retry_patterns": [
+        "mmc fail to send stop cmd"
+      ],
+      "reboot_command": "reboot",
+      "uboot_prompt": "=>\\s*$",
+      "reset_markers": [
+        "DDR V\\d",
+        "U-Boot SPL",
+        "U-Boot 20\\d\\d"
+      ],
+      "login_prompt": "tl3588 login:\\s*$",
+      "username": "root",
+      "shell_prompts": [
+        "root@[^\\r\\n]*#\\s*$",
+        "#\\s*$"
+      ],
+      "local_boot_files": {
+        "source_dir": "experiments/boot-artifacts/XHyPass",
+        "target_dir": "experiments/deploy/RK3588"
+      },
+      "dom0_init_commands": [
+        "cd ~/dom-interrupt",
+        "sh set_bridge.sh",
+        "xl create compute_NN_dom1.cfg"
+      ],
+      "init_command_timeout": 60,
+      "ssh": {
+        "host": "202.197.67.50",
+        "port": 22,
+        "username": "root",
+        "password": "<redacted>",
+        "key_file": null,
+        "connect_timeout": 60,
+        "retry_interval": 2,
+        "allow_agent": true,
+        "look_for_keys": true,
+        "progress_interval": 10
+      },
+      "dom0_pin_command": "xl vcpu-pin 0 0 0-5; xl vcpu-pin 0 1 0-5; xl vcpu-pin 0 2 0-5; xl vcpu-pin 0 3 0-5; xl vcpu-pin 0 4 0-5; xl vcpu-pin 0 5 0-5; xl vcpu-pin 0 6 6",
+      "dom1_pin_command": "xl vcpu-pin dom1 0 0-5; xl vcpu-pin dom1 1 0-5; xl vcpu-pin dom1 2 0-5; xl vcpu-pin dom1 3 0-5; xl vcpu-pin dom1 4 0-5; xl vcpu-pin dom1 5 0-5; xl vcpu-pin dom1 6 7",
+      "pin_verify_commands": [
+        "xl vcpu-list 0",
+        "xl vcpu-list dom1"
+      ],
+      "dom1_console_command": "xl console dom1",
+      "dom1_login_prompt": "[A-Za-z0-9_.-]+ login:\\s*$",
+      "dom1_username": "root",
+      "dom1_password": "<redacted>",
+      "dom1_shell_prompts": [
+        "root@[^\\r\\n]*#\\s*$",
+        "#\\s*$"
+      ],
+      "dom1_boot_timeout": 180,
+      "post_dom1_login_delay_seconds": 10,
+      "pre_experiment_commands": [
+        "cd ~ && test -f interrupt_passthrough.ko && if lsmod | awk '{print $1}' | grep -qx interrupt_passthrough; then echo '[XHYPASS] interrupt_passthrough already loaded'; else taskset -c 6 insmod interrupt_passthrough.ko; fi; lsmod | awk '{print $1}' | grep -qx interrupt_passthrough && echo __XHYPASS_RTO_READY__"
+      ],
+      "pre_experiment_success_marker": "__XHYPASS_RTO_READY__"
+    },
+    "experiment_name": "cyclictest",
+    "experiment": {
+      "binary": "./cyclictest",
+      "cpu": 6,
+      "threads": 1,
+      "priority": 99,
+      "interval_us": 1000,
+      "duration_seconds": 600,
+      "histogram_limit_us": 10000,
+      "grace_seconds": 60,
+      "cleanup_remote": true,
+      "stress_binary": "./stress-ng",
+      "stress_cpus": "6",
+      "stress_vm_workers": 1,
+      "stress_vm_bytes": "256M"
+    },
+    "timeouts": {
+      "probe": 2,
+      "uboot": 60,
+      "boot": 180,
+      "login": 30
+    },
+    "reboot": {
+      "ssh": {
+        "host": "202.197.67.50",
+        "port": 22,
+        "username": "root",
+        "password": "<redacted>",
+        "key_file": null,
+        "connect_timeout": 8,
+        "retry_interval": 1,
+        "allow_agent": true,
+        "look_for_keys": true,
+        "progress_interval": 10
+      },
+      "allow_serial_fallback": false,
+      "nonroot_login_prompt": "[A-Za-z0-9_.-]+ login:\\s*$",
+      "nonroot_username": "root",
+      "nonroot_password": "<redacted>",
+      "nonroot_cmdline_markers": [
+        "isolcpus=3",
+        "rcu_nocb=3"
+      ]
+    }
+  }
+}

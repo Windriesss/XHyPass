@@ -1,0 +1,305 @@
+{
+  "platform": {
+    "name": "E2000Q",
+    "ready": true,
+    "note": "All seven E2000Q environments are configured for serial cyclictest experiments."
+  },
+  "serial": {
+    "port": "COM12",
+    "baudrate": 115200,
+    "bytesize": 8,
+    "parity": "N",
+    "stopbits": 1,
+    "read_timeout": 0.1,
+    "write_timeout": 2.0,
+    "show_output": true
+  },
+  "int_latency": {
+    "control_serial": {
+      "port": "COM12",
+      "baudrate": 115200
+    },
+    "rtos_serial": {
+      "port": "COM11",
+      "baudrate": 115200
+    }
+  },
+  "timeouts": {
+    "probe": 2,
+    "uboot": 60,
+    "boot": 180,
+    "login": 30
+  },
+  "reboot": {
+    "prepare_serial_environment": true,
+    "xhypass_module_cpu": 3
+  },
+  "environments": {
+    "bare": {
+      "boot_command": "run boot_oee",
+      "int_latency_ready": true,
+      "int_latency_boot_commands": {
+        "idle": "run boot_rtos_idle",
+        "stress": "run boot_rtos_stress"
+      },
+      "boot_max_attempts": 3,
+      "boot_retry_delay": 1,
+      "boot_retry_patterns": [
+        "mmc fail to send stop cmd",
+        "Wrong Image Type for bootm command",
+        "Protocol wrong type for socket",
+        "can't get kernel image"
+      ],
+      "reboot_command": "reboot",
+      "uboot_prompt": "=>\\s*$",
+      "reset_markers": [
+        "U-Boot",
+        "DDR"
+      ],
+      "login_prompt": "[A-Za-z0-9_.-]+ login:\\s*$",
+      "username": "root",
+      "shell_prompts": [
+        "root@[^\\r\\n]*#\\s*$",
+        "[A-Za-z0-9_.-]+ [^\\r\\n]*#\\s*$",
+        "#\\s*$"
+      ]
+    },
+    "jailhouse": {
+      "extends": "bare",
+      "boot_command": "run boot_oee",
+      "int_latency_ready": true,
+      "jailhouse_rootcell_only": true,
+      "module_load_command": "insmod jailhouse.ko",
+      "module_settle_seconds": 2,
+      "enable_command": "jailhouse enable /usr/share/jailhouse/cells/e2000q-gsk-8g.cell",
+      "enable_settle_seconds": 2,
+      "int_latency_create_command": "jailhouse cell create e2000q-8g-QSemOS-RT.cell",
+      "int_latency_load_commands": {
+        "idle": "jailhouse cell load e2000q-QSemOS-RT qsemos-rt.bin_idle -a 0xC0000000",
+        "stress": "jailhouse cell load e2000q-QSemOS-RT qsemos-rt.bin_stress -a 0xC0000000"
+      },
+      "int_latency_start_command": "jailhouse cell start e2000q-QSemOS-RT"
+    },
+    "xen_credit2": {
+      "environment_type": "xen",
+      "xen_serial_only": true,
+      "boot_command": "run boot_xen",
+      "int_latency_ready": true,
+      "int_latency_boot_command": "run boot_xen_dom0less",
+      "int_latency_pin_commands": [
+        "xl vcpu-pin 0 1 3",
+        "xl vcpu-pin 1 0 1"
+      ],
+      "int_latency_boot_files_by_condition": {
+        "idle": [
+          {
+            "source": "experiments/boot-artifacts/E2000Q-int-latency/xen/qsemos-rt.bin_native",
+            "destination": "experiments/deploy/E2000Q/dom0less/qsemos-rt.bin"
+          },
+          {
+            "source": "experiments/boot-artifacts/E2000Q-int-latency/xen/e2000q-gsk-board-xen-dom0less.dtb.credit2",
+            "destination": "experiments/deploy/E2000Q/dom0less/e2000q-gsk-board-xen-dom0less.dtb"
+          }
+        ],
+        "stress": [
+          {
+            "source": "experiments/boot-artifacts/E2000Q-int-latency/xen/qsemos-rt.bin_native_stress",
+            "destination": "experiments/deploy/E2000Q/dom0less/qsemos-rt.bin"
+          },
+          {
+            "source": "experiments/boot-artifacts/E2000Q-int-latency/xen/e2000q-gsk-board-xen-dom0less.dtb.credit2",
+            "destination": "experiments/deploy/E2000Q/dom0less/e2000q-gsk-board-xen-dom0less.dtb"
+          }
+        ]
+      },
+      "boot_max_attempts": 3,
+      "boot_retry_delay_seconds": 1,
+      "boot_reset_cycles": 3,
+      "boot_reset_command": "reset",
+      "boot_reset_delay_seconds": 1,
+      "boot_retry_patterns": [
+        "ARP Retry count exceeded",
+        "mmc fail to send stop cmd",
+        "Wrong Image Type for bootm command",
+        "Protocol wrong type for socket",
+        "can't get kernel image"
+      ],
+      "boot_immediate_reset_patterns": [
+        "ARP Retry count exceeded"
+      ],
+      "reboot_command": "reboot",
+      "uboot_prompt": "=>\\s*$",
+      "login_prompt": "[A-Za-z0-9_.-]+ login:\\s*$",
+      "username": "root",
+      "shell_prompts": [
+        "root@[^\\r\\n]*#\\s*$",
+        "[A-Za-z0-9_.-]+ [^\\r\\n]*#\\s*$",
+        "#\\s*$"
+      ],
+      "local_boot_files": {
+        "source_dir": "experiments/boot-artifacts/E2000Q/Xen_credit2",
+        "target_dir": "experiments/deploy/E2000Q"
+      }
+    },
+    "xen_credit2_WFX": {
+      "extends": "xen_credit2",
+      "int_latency_ready": true,
+      "int_latency_boot_files_by_condition": {
+        "idle": [
+          {
+            "source": "experiments/boot-artifacts/E2000Q-int-latency/xen/qsemos-rt.bin_native",
+            "destination": "experiments/deploy/E2000Q/dom0less/qsemos-rt.bin"
+          },
+          {
+            "source": "experiments/boot-artifacts/E2000Q-int-latency/xen/e2000q-gsk-board-xen-dom0less.dtb.credit2.WFX",
+            "destination": "experiments/deploy/E2000Q/dom0less/e2000q-gsk-board-xen-dom0less.dtb"
+          }
+        ],
+        "stress": [
+          {
+            "source": "experiments/boot-artifacts/E2000Q-int-latency/xen/qsemos-rt.bin_native_stress",
+            "destination": "experiments/deploy/E2000Q/dom0less/qsemos-rt.bin"
+          },
+          {
+            "source": "experiments/boot-artifacts/E2000Q-int-latency/xen/e2000q-gsk-board-xen-dom0less.dtb.credit2.WFX",
+            "destination": "experiments/deploy/E2000Q/dom0less/e2000q-gsk-board-xen-dom0less.dtb"
+          }
+        ]
+      },
+      "local_boot_files": {
+        "source_dir": "experiments/boot-artifacts/E2000Q/Xen_credit2_nativeWFX"
+      }
+    },
+    "xen_null": {
+      "extends": "xen_credit2",
+      "int_latency_ready": true,
+      "int_latency_pin_commands": [
+        "xl vcpu-pin 1 0 1",
+        "xl vcpu-pin 0 1 3"
+      ],
+      "int_latency_boot_files_by_condition": {
+        "idle": [
+          {
+            "source": "experiments/boot-artifacts/E2000Q-int-latency/xen/qsemos-rt.bin_native",
+            "destination": "experiments/deploy/E2000Q/dom0less/qsemos-rt.bin"
+          },
+          {
+            "source": "experiments/boot-artifacts/E2000Q-int-latency/xen/e2000q-gsk-board-xen-dom0less.dtb.null",
+            "destination": "experiments/deploy/E2000Q/dom0less/e2000q-gsk-board-xen-dom0less.dtb"
+          }
+        ],
+        "stress": [
+          {
+            "source": "experiments/boot-artifacts/E2000Q-int-latency/xen/qsemos-rt.bin_native_stress",
+            "destination": "experiments/deploy/E2000Q/dom0less/qsemos-rt.bin"
+          },
+          {
+            "source": "experiments/boot-artifacts/E2000Q-int-latency/xen/e2000q-gsk-board-xen-dom0less.dtb.null",
+            "destination": "experiments/deploy/E2000Q/dom0less/e2000q-gsk-board-xen-dom0less.dtb"
+          }
+        ]
+      },
+      "local_boot_files": {
+        "source_dir": "experiments/boot-artifacts/E2000Q/Xen_null"
+      }
+    },
+    "xen_null_WFX": {
+      "extends": "xen_null",
+      "int_latency_ready": true,
+      "int_latency_boot_files_by_condition": {
+        "idle": [
+          {
+            "source": "experiments/boot-artifacts/E2000Q-int-latency/xen/qsemos-rt.bin_native",
+            "destination": "experiments/deploy/E2000Q/dom0less/qsemos-rt.bin"
+          },
+          {
+            "source": "experiments/boot-artifacts/E2000Q-int-latency/xen/e2000q-gsk-board-xen-dom0less.dtb.null.WFX",
+            "destination": "experiments/deploy/E2000Q/dom0less/e2000q-gsk-board-xen-dom0less.dtb"
+          }
+        ],
+        "stress": [
+          {
+            "source": "experiments/boot-artifacts/E2000Q-int-latency/xen/qsemos-rt.bin_native_stress",
+            "destination": "experiments/deploy/E2000Q/dom0less/qsemos-rt.bin"
+          },
+          {
+            "source": "experiments/boot-artifacts/E2000Q-int-latency/xen/e2000q-gsk-board-xen-dom0less.dtb.null.WFX",
+            "destination": "experiments/deploy/E2000Q/dom0less/e2000q-gsk-board-xen-dom0less.dtb"
+          }
+        ]
+      },
+      "local_boot_files": {
+        "source_dir": "experiments/boot-artifacts/E2000Q/Xen_null_nativeWFX"
+      }
+    },
+    "XHyPass": {
+      "extends": "xen_credit2",
+      "boot_command": "run boot_xen",
+      "int_latency_ready": true,
+      "int_latency_boot_files_by_condition": {
+        "idle": [
+          {
+            "source": "experiments/boot-artifacts/E2000Q-int-latency/xen/qsemos-rt.bin_pass",
+            "destination": "experiments/deploy/E2000Q/dom0less/qsemos-rt.bin"
+          },
+          {
+            "source": "experiments/boot-artifacts/E2000Q-int-latency/xen/e2000q-gsk-board-xen-dom0less.dtb.credit2",
+            "destination": "experiments/deploy/E2000Q/dom0less/e2000q-gsk-board-xen-dom0less.dtb"
+          }
+        ],
+        "stress": [
+          {
+            "source": "experiments/boot-artifacts/E2000Q-int-latency/xen/qsemos-rt.bin_pass_stress",
+            "destination": "experiments/deploy/E2000Q/dom0less/qsemos-rt.bin"
+          },
+          {
+            "source": "experiments/boot-artifacts/E2000Q-int-latency/xen/e2000q-gsk-board-xen-dom0less.dtb.credit2",
+            "destination": "experiments/deploy/E2000Q/dom0less/e2000q-gsk-board-xen-dom0less.dtb"
+          }
+        ]
+      },
+      "local_boot_files": {
+        "source_dir": "experiments/boot-artifacts/E2000Q/XHyPass"
+      },
+      "xhypass_module_cpu": 3,
+      "xhypass_module_file": "interrupt_passthrough.ko",
+      "xhypass_module_settle_seconds": 2
+    }
+  },
+  "experiments": {
+    "cyclictest": {
+      "binary": "./cyclictest",
+      "cpu": 3,
+      "threads": 1,
+      "priority": 99,
+      "interval_us": 1000,
+      "duration_seconds": 600,
+      "histogram_limit_us": 10000,
+      "grace_seconds": 60,
+      "cleanup_remote": true
+    },
+    "cyclictest-stress": {
+      "binary": "./cyclictest",
+      "cpu": 3,
+      "threads": 1,
+      "priority": 99,
+      "interval_us": 1000,
+      "duration_seconds": 600,
+      "histogram_limit_us": 10000,
+      "grace_seconds": 60,
+      "cleanup_remote": true,
+      "stress_binary": "./stress-ng",
+      "stress_cpus": "3",
+      "stress_vm_workers": 1,
+      "stress_vm_bytes": "256M"
+    },
+    "int-latency": {
+      "condition": "idle",
+      "duration_seconds": 600,
+      "timeout_seconds": 780,
+      "completion_not_before_ratio": 0.9,
+      "completion_settle_seconds": 5,
+      "completion_pattern": "taskpendcnt:\\s*600000"
+    }
+  }
+}

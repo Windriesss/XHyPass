@@ -1,0 +1,27 @@
+#!/bin/bash
+#
+# mktarball: Make a release tarball (including just xen)
+#
+# Takes 2 arguments, the path to the dist directory and the version
+set -ex
+
+if [[ -z "$1" || -z "$2" ]] ; then
+  echo "usage: $0 path-to-XEN_ROOT xen-version"
+  exit 1
+fi
+
+xen_root="$1"
+desc="$2"
+
+tdir="$xen_root/dist"
+
+rm -f $tdir/xen-$desc.tar*
+
+mkdir -p $tdir
+
+git --git-dir="$xen_root/.git" archive --format=tar HEAD --prefix=xen-$desc/ \
+    >"$tdir/xen-$desc.tar"
+
+gzip -9k "$tdir/xen-$desc.tar"
+
+echo "Source tarball in $xen_root/dist/xen-$desc.tar.gz"

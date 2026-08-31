@@ -1,0 +1,114 @@
+#!/bin/bash
+
+#
+# DOCKER_CMD should be either `docker` or `podman`.
+#
+# if using (rootless) podman, remember to set /etc/subuid
+# and /etc/subgid.
+#
+docker_cmd=${DOCKER_CMD:-"docker"}
+[ "$DOCKER_CMD" = "podman" ] && userns_podman="--userns=keep-id" selinux=",z"
+
+einfo() {
+    echo "$*" >&2
+}
+
+die() {
+    echo "$*" >&2
+    exit 1
+}
+
+#
+# The caller is expected to override the CONTAINER environment
+# variable with the container they wish to launch.
+#
+BASE="registry.gitlab.com/xen-project/xen"
+case "_${CONTAINER}" in
+    _alpine) CONTAINER="${BASE}/alpine:3.18" ;;
+    _alpine-arm64v8) CONTAINER="${BASE}/alpine:3.18-arm64v8" ;;
+    _archlinux|_arch) CONTAINER="${BASE}/archlinux:current" ;;
+    _centos7) CONTAINER="${BASE}/centos:7" ;;
+    _fedora) CONTAINER="${BASE}/fedora:41-x86_64";;
+    _bullseye-ppc64le) CONTAINER="${BASE}/debian:11-ppc64le" ;;
+    _bookworm-ppc64le) CONTAINER="${BASE}/debian:12-ppc64le" ;;
+    _bullseye-riscv64) CONTAINER="${BASE}/debian:11-riscv64" ;;
+    _bookworm-riscv64) CONTAINER="${BASE}/debian:12-riscv64" ;;
+    _bookworm-x86_64-gcc-ibt) CONTAINER="${BASE}/debian:12-x86_64-gcc-ibt" ;;
+    _bookworm|_bookworm-x86_64|_) CONTAINER="${BASE}/debian:12-x86_64" ;;
+    _bookworm-i386|_bookworm-x86_32) CONTAINER="${BASE}/debian:12-x86_32" ;;
+    _bookworm-arm64v8-arm32-gcc) CONTAINER="${BASE}/debian:bookworm-arm64v8-arm32-gcc" ;;
+    _bookworm-arm64v8) CONTAINER="${BASE}/debian:bookworm-arm64v8" ;;
+    _bookworm-cppcheck) CONTAINER="${BASE}/debian:bookworm-cppcheck" ;;
+    _opensuse-leap|_leap) CONTAINER="${BASE}/opensuse:leap-15.6-x86_64" ;;
+    _opensuse-tumbleweed|_tumbleweed) CONTAINER="${BASE}/opensuse:tumbleweed-x86_64" ;;
+    _xenial) CONTAINER="${BASE}/ubuntu:16.04-x86_64" ;;
+    _bionic) CONTAINER="${BASE}/ubuntu:18.04-x86_64" ;;
+    _focal)  CONTAINER="${BASE}/ubuntu:20.04-x86_64" ;;
+    _jammy)  CONTAINER="${BASE}/ubuntu:22.04-x86_64" ;;
+    _noble)  CONTAINER="${BASE}/ubuntu:24.04-x86_64" ;;
+esac
+
+# Use this variable to control whether root should be used
+case "_${CONTAINER_UID0}" in
+    _1)   userarg="-u 0" ;;
+    _0|_) userarg="-u $(id -u) $userns_podman" ;;
+esac
+
+# Save the commands for future use
+cmd=("$@")
+
+# If no command was specified, just drop us into a shell if we're interactive
+[ $# -eq 0 ] && tty -s && cmd=("/bin/bash")
+
+# Are we in an interactive terminal?
+tty -s && termint=t
+
+#
+# Fetch the latest version of the container in hub.docker.com,
+# unless it's a newly created local copy.
+#
+if [[ "_${CONTAINER_NO_PULL}" != "_1" ]]; then
+    einfo "*** Ensuring ${CONTAINER} is up to date"
+    ${docker_cmd} pull ${CONTAINER} > /dev/null ||     \
+        die "Failed to update container"
+fi
+
+if hash greadlink > /dev/null 2>&1; then
+    READLINK=greadlink
+elif [[ $(uname -s) == "Darwin" ]]; then
+    echo "Unable to forward SSH agent without coreutils installed"
+    unset SSH_AUTH_SOCK
+else
+    READLINK=readlink
+fi
+
+# Ensure we've got what we need for SSH_AUTH_SOCK
+if [[ -n ${SSH_AUTH_SOCK} ]]; then
+    fullpath_sock=$(${READLINK} -f ${SSH_AUTH_SOCK} 2> /dev/null)
+    if [ $? -ne 0 ]; then
+        echo "Invalid SSH_AUTH_SOCK: ${SSH_AUTH_SOCK}"
+        unset SSH_AUTH_SOCK
+    else
+        SSH_AUTH_DIR=$(dirname ${fullpath_sock})
+        SSH_AUTH_NAME=$(basename ${fullpath_sock})
+    fi
+fi
+
+# Figure out the base of what we want as our sources
+# by using the top of the git repo
+if [[ -z ${CONTAINER_PATH} ]]; then
+    CONTAINER_PATH=$(git rev-parse --show-toplevel)
+fi
+
+# Kick off Docker
+einfo "*** Launching container ..."
+exec ${docker_cmd} run \
+    ${userarg} \
+    ${SSH_AUTH_SOCK:+-e SSH_AUTH_SOCK="/tmp/ssh-agent/${SSH_AUTH_NAME}"} \
+    -v "${CONTAINER_PATH}":/build:rw${selinux} \
+    -v "${HOME}/.ssh":/root/.ssh:ro \
+    ${SSH_AUTH_DIR:+-v "${SSH_AUTH_DIR}":/tmp/ssh-agent${selinux}} \
+    ${CONTAINER_ARGS} \
+    -${termint}i --rm -- \
+    ${CONTAINER} \
+    "${cmd[@]}"

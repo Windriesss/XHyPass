@@ -1,0 +1,109 @@
+{
+  "status": "completed",
+  "condition": "cpu3_t1_p99_i1000us_d600s_h10000",
+  "run_index": 1,
+  "run_count": 1,
+  "reboot_policy": "each-run",
+  "updated_at": "2026-08-27T11:56:08.889849+08:00",
+  "serial_transcript": "data/E2000Q/cyclictest/XHyPass/cpu3_t1_p99_i1000us_d600s_h10000/_details/completed/run_004/serial.log",
+  "configuration": {
+    "platform_name": "E2000Q",
+    "serial": {
+      "port": "COM12",
+      "baudrate": 115200,
+      "bytesize": 8,
+      "parity": "N",
+      "stopbits": 1,
+      "read_timeout": 0.1,
+      "write_timeout": 2.0,
+      "show_output": true
+    },
+    "environment_name": "XHyPass",
+    "environment": {
+      "environment_type": "xen",
+      "xen_serial_only": true,
+      "boot_command": "run boot_xen",
+      "int_latency_ready": true,
+      "int_latency_boot_command": "run boot_xen_dom0less",
+      "int_latency_pin_commands": [
+        "xl vcpu-pin 0 1 3",
+        "xl vcpu-pin 1 0 1"
+      ],
+      "int_latency_boot_files_by_condition": {
+        "idle": [
+          {
+            "source": "experiments/boot-artifacts/E2000Q-int-latency/xen/qsemos-rt.bin_pass",
+            "destination": "experiments/deploy/E2000Q/dom0less/qsemos-rt.bin"
+          },
+          {
+            "source": "experiments/boot-artifacts/E2000Q-int-latency/xen/e2000q-gsk-board-xen-dom0less.dtb.credit2",
+            "destination": "experiments/deploy/E2000Q/dom0less/e2000q-gsk-board-xen-dom0less.dtb"
+          }
+        ],
+        "stress": [
+          {
+            "source": "experiments/boot-artifacts/E2000Q-int-latency/xen/qsemos-rt.bin_pass_stress",
+            "destination": "experiments/deploy/E2000Q/dom0less/qsemos-rt.bin"
+          },
+          {
+            "source": "experiments/boot-artifacts/E2000Q-int-latency/xen/e2000q-gsk-board-xen-dom0less.dtb.credit2",
+            "destination": "experiments/deploy/E2000Q/dom0less/e2000q-gsk-board-xen-dom0less.dtb"
+          }
+        ]
+      },
+      "boot_max_attempts": 3,
+      "boot_retry_delay_seconds": 1,
+      "boot_reset_cycles": 3,
+      "boot_reset_command": "reset",
+      "boot_reset_delay_seconds": 1,
+      "boot_retry_patterns": [
+        "ARP Retry count exceeded",
+        "mmc fail to send stop cmd",
+        "Wrong Image Type for bootm command",
+        "Protocol wrong type for socket",
+        "can't get kernel image"
+      ],
+      "boot_immediate_reset_patterns": [
+        "ARP Retry count exceeded"
+      ],
+      "reboot_command": "reboot",
+      "uboot_prompt": "=>\\s*$",
+      "login_prompt": "[A-Za-z0-9_.-]+ login:\\s*$",
+      "username": "root",
+      "shell_prompts": [
+        "root@[^\\r\\n]*#\\s*$",
+        "[A-Za-z0-9_.-]+ [^\\r\\n]*#\\s*$",
+        "#\\s*$"
+      ],
+      "local_boot_files": {
+        "source_dir": "experiments/boot-artifacts/E2000Q/XHyPass",
+        "target_dir": "experiments/deploy/E2000Q"
+      },
+      "xhypass_module_cpu": 3,
+      "xhypass_module_file": "interrupt_passthrough.ko",
+      "xhypass_module_settle_seconds": 2
+    },
+    "experiment_name": "cyclictest",
+    "experiment": {
+      "binary": "./cyclictest",
+      "cpu": 3,
+      "threads": 1,
+      "priority": 99,
+      "interval_us": 1000,
+      "duration_seconds": 600,
+      "histogram_limit_us": 10000,
+      "grace_seconds": 60,
+      "cleanup_remote": true
+    },
+    "timeouts": {
+      "probe": 2,
+      "uboot": 60,
+      "boot": 180,
+      "login": 30
+    },
+    "reboot": {
+      "prepare_serial_environment": true,
+      "xhypass_module_cpu": 3
+    }
+  }
+}

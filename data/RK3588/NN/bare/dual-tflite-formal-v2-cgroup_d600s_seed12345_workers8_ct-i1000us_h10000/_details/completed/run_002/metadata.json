@@ -1,0 +1,124 @@
+{
+  "status": "completed",
+  "condition": "dual-tflite-formal-v2-cgroup_d600s_seed12345_workers8_ct-i1000us_h10000",
+  "run_index": 1,
+  "run_count": 1,
+  "reboot_policy": "each-run",
+  "updated_at": "2026-08-26T17:25:20.319860+08:00",
+  "serial_transcript": "data/RK3588/NN/bare/dual-tflite-formal-v2-cgroup_d600s_seed12345_workers8_ct-i1000us_h10000/_details/completed/run_002/serial.log",
+  "configuration": {
+    "platform_name": "TL3588",
+    "serial": {
+      "port": "COM10",
+      "baudrate": 115200,
+      "bytesize": 8,
+      "parity": "N",
+      "stopbits": 1,
+      "read_timeout": 0.1,
+      "write_timeout": 2.0,
+      "show_output": true
+    },
+    "environment_name": "bare",
+    "environment": {
+      "boot_command": "run boot_oee",
+      "int_latency_ready": true,
+      "int_latency_boot_commands": {
+        "idle": "run boot_rtos_idle",
+        "stress": "run boot_rtos_stress"
+      },
+      "boot_max_attempts": 3,
+      "boot_retry_delay_seconds": 1.0,
+      "boot_retry_patterns": [
+        "mmc fail to send stop cmd",
+        "Wrong Image Type for bootm command",
+        "ERROR -91: Protocol wrong type for socket",
+        "can't get kernel image"
+      ],
+      "reboot_command": "reboot",
+      "uboot_prompt": "=>\\s*$",
+      "reset_markers": [
+        "DDR V\\d",
+        "U-Boot SPL",
+        "U-Boot 20\\d\\d"
+      ],
+      "login_prompt": "tl3588 login:\\s*$",
+      "username": "root",
+      "shell_prompts": [
+        "root@[^\\r\\n]*#\\s*$",
+        "#\\s*$"
+      ]
+    },
+    "experiment_name": "NN",
+    "experiment": {
+      "profile_name": "dual-tflite-formal-v2-cgroup",
+      "remote_root": "~/NN",
+      "local_run_script": "experiments/workloads/NN/bare/run_all.sh",
+      "duration_seconds": 600,
+      "seed": 12345,
+      "workers": 8,
+      "inception_threads": 6,
+      "mnasnet_threads": 6,
+      "workload_cpus": "0-5",
+      "cgroup_weight": 100,
+      "cgroup_shares": 1024,
+      "cyclictest_interval_us": 1000,
+      "cyclictest_priority": 99,
+      "histogram_limit_us": 10000,
+      "period_seconds": 60,
+      "profiles": [
+        {
+          "name": "light",
+          "inception_qps": 0.2,
+          "peak_qps": 5,
+          "poisson_qps": 3,
+          "constant_qps": 3
+        },
+        {
+          "name": "medium",
+          "inception_qps": 0.2,
+          "peak_qps": 12,
+          "poisson_qps": 6,
+          "constant_qps": 6
+        },
+        {
+          "name": "heavy",
+          "inception_qps": 0.2,
+          "peak_qps": 20,
+          "poisson_qps": 9,
+          "constant_qps": 9
+        }
+      ],
+      "grace_seconds": 600,
+      "cleanup_remote": true,
+      "transfer_chunk_bytes": 262144
+    },
+    "timeouts": {
+      "probe": 2,
+      "uboot": 60,
+      "boot": 180,
+      "login": 30
+    },
+    "reboot": {
+      "ssh": {
+        "host": "202.197.67.50",
+        "port": 22,
+        "username": "root",
+        "password": "<redacted>",
+        "key_file": null,
+        "connect_timeout": 8,
+        "retry_interval": 1,
+        "allow_agent": true,
+        "look_for_keys": true,
+        "progress_interval": 10
+      },
+      "allow_serial_fallback": false,
+      "nonroot_login_prompt": "[A-Za-z0-9_.-]+ login:\\s*$",
+      "nonroot_username": "root",
+      "nonroot_password": "<redacted>",
+      "nonroot_cmdline_markers": [
+        "isolcpus=3",
+        "rcu_nocb=3"
+      ]
+    }
+  }
+}

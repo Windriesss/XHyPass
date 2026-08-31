@@ -1,0 +1,24 @@
+[before]
+inception=/sys/fs/cgroup/cpu/xy_nn_bare_662_inception
+inception nr_periods 0
+inception nr_throttled 0
+inception throttled_time 0
+inception nr_bursts 0
+inception burst_time 0
+mnasnet nr_periods 0
+mnasnet nr_throttled 0
+mnasnet throttled_time 0
+mnasnet nr_bursts 0
+mnasnet burst_time 0
+[after]
+inception=/sys/fs/cgroup/cpu/xy_nn_bare_662_inception
+inception nr_periods 0
+inception nr_throttled 0
+inception throttled_time 0
+inception nr_bursts 0
+inception burst_time 0
+mnasnet nr_periods 0
+mnasnet nr_throttled 0
+mnasnet throttled_time 0
+mnasnet nr_bursts 0
+mnasnet burst_time 0

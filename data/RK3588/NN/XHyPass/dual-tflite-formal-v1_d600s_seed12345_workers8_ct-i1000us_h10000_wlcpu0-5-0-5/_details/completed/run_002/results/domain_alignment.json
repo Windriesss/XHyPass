@@ -1,0 +1,34 @@
+{
+  "method": "two-domain-ready-go-barrier",
+  "token": "18cec1259a7103b4",
+  "timestamp_note": "Observed start/finish values come from each domain's wall clock; compare them only when dom0 and dom1 clocks are synced.",
+  "levels": [
+    {
+      "name": "light",
+      "coordinator_released_at": "2026-08-24T21:34:37.842+08:00",
+      "go_publish_gap_ms": 0.213,
+      "observed_start_gap_ms": 4766.555,
+      "observed_finish_gap_ms": 4758.755,
+      "vm1_elapsed_seconds": 600.088178,
+      "vm2_elapsed_seconds": 600.080378
+    },
+    {
+      "name": "medium",
+      "coordinator_released_at": "2026-08-24T21:44:38.120+08:00",
+      "go_publish_gap_ms": 1.962,
+      "observed_start_gap_ms": 4831.728,
+      "observed_finish_gap_ms": 4830.841,
+      "vm1_elapsed_seconds": 600.06914,
+      "vm2_elapsed_seconds": 600.068252
+    },
+    {
+      "name": "heavy",
+      "coordinator_released_at": "2026-08-24T21:54:38.502+08:00",
+      "go_publish_gap_ms": 1.699,
+      "observed_start_gap_ms": 4827.25,
+      "observed_finish_gap_ms": 4833.473,
+      "vm1_elapsed_seconds": 600.066068,
+      "vm2_elapsed_seconds": 600.072292
+    }
+  ]
+}

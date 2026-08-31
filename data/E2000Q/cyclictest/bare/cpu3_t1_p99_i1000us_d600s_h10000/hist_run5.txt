@@ -1,0 +1,14 @@
+# Histogram
+000004 000173
+000005 078637
+000006 520251
+000007 000937
+000008 000001
+000009 000001
+# Min Latencies: 00004
+# Avg Latencies: 00005
+# Max Latencies: 00009
+# Histogram Overflows: 00000
+# Histogram Overflow at cycle number:
+# Thread 0: 
+

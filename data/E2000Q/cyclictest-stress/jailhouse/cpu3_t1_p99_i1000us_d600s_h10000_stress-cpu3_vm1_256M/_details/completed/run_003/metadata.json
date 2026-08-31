@@ -1,0 +1,78 @@
+{
+  "status": "completed",
+  "condition": "cpu3_t1_p99_i1000us_d600s_h10000_stress-cpu3_vm1_256M",
+  "run_index": 1,
+  "run_count": 1,
+  "reboot_policy": "each-run",
+  "updated_at": "2026-08-20T10:14:09.471533+08:00",
+  "serial_transcript": "data/E2000Q/cyclictest-stress/jailhouse/cpu3_t1_p99_i1000us_d600s_h10000_stress-cpu3_vm1_256M/_details/completed/run_003/serial.log",
+  "configuration": {
+    "platform_name": "E2000Q",
+    "serial": {
+      "port": "COM12",
+      "baudrate": 115200,
+      "bytesize": 8,
+      "parity": "N",
+      "stopbits": 1,
+      "read_timeout": 0.1,
+      "write_timeout": 2.0,
+      "show_output": true
+    },
+    "environment_name": "jailhouse",
+    "environment": {
+      "boot_command": "run boot_oee",
+      "boot_max_attempts": 3,
+      "boot_retry_delay": 1,
+      "boot_retry_patterns": [
+        "mmc fail to send stop cmd",
+        "Wrong Image Type for bootm command",
+        "Protocol wrong type for socket",
+        "can't get kernel image"
+      ],
+      "reboot_command": "reboot",
+      "uboot_prompt": "=>\\s*$",
+      "reset_markers": [
+        "U-Boot",
+        "DDR"
+      ],
+      "login_prompt": "[A-Za-z0-9_.-]+ login:\\s*$",
+      "username": "root",
+      "shell_prompts": [
+        "root@[^\\r\\n]*#\\s*$",
+        "[A-Za-z0-9_.-]+ [^\\r\\n]*#\\s*$",
+        "#\\s*$"
+      ],
+      "jailhouse_rootcell_only": true,
+      "module_load_command": "insmod jailhouse.ko",
+      "module_settle_seconds": 2,
+      "enable_command": "jailhouse enable /usr/share/jailhouse/cells/e2000q-gsk-8g.cell",
+      "enable_settle_seconds": 2
+    },
+    "experiment_name": "cyclictest-stress",
+    "experiment": {
+      "binary": "./cyclictest",
+      "cpu": 3,
+      "threads": 1,
+      "priority": 99,
+      "interval_us": 1000,
+      "duration_seconds": 600,
+      "histogram_limit_us": 10000,
+      "grace_seconds": 60,
+      "cleanup_remote": true,
+      "stress_binary": "./stress-ng",
+      "stress_cpus": "3",
+      "stress_vm_workers": 1,
+      "stress_vm_bytes": "256M"
+    },
+    "timeouts": {
+      "probe": 2,
+      "uboot": 60,
+      "boot": 180,
+      "login": 30
+    },
+    "reboot": {
+      "prepare_serial_environment": true,
+      "xhypass_module_cpu": 3
+    }
+  }
+}

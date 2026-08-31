@@ -1,0 +1,192 @@
+{
+  "status": "completed",
+  "condition": "dual-tflite-formal-v1_d600s_seed12345_workers8_ct-i1000us_h10000_wlcpu0-2-0-2",
+  "run_index": 1,
+  "run_count": 1,
+  "reboot_policy": "each-run",
+  "updated_at": "2026-08-26T10:24:09.998450+08:00",
+  "serial_transcript": "data/RK3588/NN/xen_null_WFX/dual-tflite-formal-v1_d600s_seed12345_workers8_ct-i1000us_h10000_wlcpu0-2-0-2/_details/completed/run_005/serial.log",
+  "configuration": {
+    "platform_name": "TL3588",
+    "serial": {
+      "port": "COM10",
+      "baudrate": 115200,
+      "bytesize": 8,
+      "parity": "N",
+      "stopbits": 1,
+      "read_timeout": 0.1,
+      "write_timeout": 2.0,
+      "show_output": true
+    },
+    "environment_name": "xen_null_WFX",
+    "environment": {
+      "environment_type": "xen",
+      "boot_command": "run boot_xen",
+      "boot_max_attempts": 3,
+      "boot_retry_delay_seconds": 1.0,
+      "boot_retry_patterns": [
+        "mmc fail to send stop cmd",
+        "Wrong Image Type for bootm command",
+        "ERROR -91: Protocol wrong type for socket",
+        "can't get kernel image"
+      ],
+      "reboot_command": "reboot",
+      "uboot_prompt": "=>\\s*$",
+      "reset_markers": [
+        "DDR V\\d",
+        "U-Boot SPL",
+        "U-Boot 20\\d\\d"
+      ],
+      "login_prompt": "tl3588 login:\\s*$",
+      "username": "root",
+      "shell_prompts": [
+        "root@[^\\r\\n]*#\\s*$",
+        "#\\s*$"
+      ],
+      "local_boot_files": {
+        "source_dir": "experiments/boot-artifacts/TL3588/Xen_null_nativeWFX",
+        "target_dir": "experiments/deploy/RK3588"
+      },
+      "dom0_init_commands": [
+        "cd ~/dom-interrupt",
+        "xl vcpu-set 0 4",
+        "xl vcpu-pin 0 0 0; xl vcpu-pin 0 1 1; xl vcpu-pin 0 2 4; xl vcpu-pin 0 3 6",
+        "sh set_bridge.sh",
+        "xl create compute_NN_dom1_nullsched.cfg",
+        "xl vcpu-pin dom1 0 2; xl vcpu-pin dom1 1 3; xl vcpu-pin dom1 2 5; xl vcpu-pin dom1 3 7"
+      ],
+      "init_command_timeout": 60,
+      "ssh": {
+        "host": "202.197.67.50",
+        "port": 22,
+        "username": "root",
+        "password": "<redacted>",
+        "key_file": null,
+        "connect_timeout": 60,
+        "retry_interval": 2,
+        "allow_agent": true,
+        "look_for_keys": true,
+        "progress_interval": 10
+      },
+      "dom0_pin_command": "",
+      "dom1_pin_command": "xl vcpu-pin dom1 0 2; xl vcpu-pin dom1 1 3; xl vcpu-pin dom1 2 5; xl vcpu-pin dom1 3 7",
+      "pin_verify_commands": [
+        "xl vcpu-list 0",
+        "xl vcpu-list dom1"
+      ],
+      "dom1_console_command": "xl console dom1",
+      "dom1_login_prompt": "[A-Za-z0-9_.-]+ login:\\s*$",
+      "dom1_username": "root",
+      "dom1_password": "<redacted>",
+      "dom1_shell_prompts": [
+        "root@[^\\r\\n]*#\\s*$",
+        "#\\s*$"
+      ],
+      "dom1_boot_timeout": 180,
+      "post_dom1_login_delay_seconds": 10,
+      "dom0_init_post_delays_seconds": {
+        "xl vcpu-set 0 4": 2
+      },
+      "experiment_overrides": {
+        "cpu": 3,
+        "stress_cpus": "3"
+      },
+      "xen_boot_health_attempts": 3,
+      "xen_control_ready_timeout_seconds": 20,
+      "dom1_start_attempts": 3,
+      "dom1_console_ready_timeout_seconds": 60,
+      "dom1_pin_during_init": true
+    },
+    "experiment_name": "NN",
+    "experiment": {
+      "profile_name": "dual-tflite-formal-v1",
+      "duration_seconds": 600,
+      "seed": 12345,
+      "workers": 8,
+      "inception_threads": 6,
+      "mnasnet_threads": 3,
+      "dom0_model_threads": 6,
+      "dom1_model_threads": 3,
+      "dom0_cyclictest_cpu": 3,
+      "dom1_cyclictest_cpu": 3,
+      "dom0_workload_cpus": "0-2",
+      "dom1_workload_cpus": "0-2",
+      "cyclictest_interval_us": 1000,
+      "cyclictest_priority": 99,
+      "histogram_limit_us": 10000,
+      "period_seconds": 60,
+      "start_delay_seconds": 2,
+      "dom0_launch_delay_seconds": 0,
+      "dom1_launch_delay_seconds": 0,
+      "warmup_seconds": 0,
+      "warmup_qps": 1,
+      "domain_sync_timeout_seconds": 180,
+      "profiles": [
+        {
+          "name": "light",
+          "inception_qps": 0.2,
+          "peak_qps": 5,
+          "poisson_qps": 3,
+          "constant_qps": 3
+        },
+        {
+          "name": "medium",
+          "inception_qps": 0.2,
+          "peak_qps": 12,
+          "poisson_qps": 6,
+          "constant_qps": 6
+        },
+        {
+          "name": "heavy",
+          "inception_qps": 0.2,
+          "peak_qps": 20,
+          "poisson_qps": 9,
+          "constant_qps": 9
+        }
+      ],
+      "remote_xen_dir": "~/NN/xen_credit2",
+      "dom0_bridge_interface": "xenbr0",
+      "dom0_bridge_ip": "202.197.67.50",
+      "dom1_interface": "enX0",
+      "dom1_ip": "202.197.67.51",
+      "dom1_netmask": "255.255.255.0",
+      "dom1_network_settle_seconds": 5,
+      "dom1_network_monitor_interval_seconds": 10,
+      "dom1_network_monitor_failures": 2,
+      "dom1_network_probe_timeout_seconds": 2,
+      "local_dom0_script": "experiments/workloads/NN/xen_credit2/run_vm1.sh",
+      "local_dom1_script": "experiments/workloads/NN/xen_credit2/run_vm2.sh",
+      "grace_seconds": 600,
+      "cleanup_remote": true,
+      "transfer_chunk_bytes": 262144
+    },
+    "timeouts": {
+      "probe": 2,
+      "uboot": 60,
+      "boot": 180,
+      "login": 30
+    },
+    "reboot": {
+      "ssh": {
+        "host": "202.197.67.50",
+        "port": 22,
+        "username": "root",
+        "password": "<redacted>",
+        "key_file": null,
+        "connect_timeout": 8,
+        "retry_interval": 1,
+        "allow_agent": true,
+        "look_for_keys": true,
+        "progress_interval": 10
+      },
+      "allow_serial_fallback": false,
+      "nonroot_login_prompt": "[A-Za-z0-9_.-]+ login:\\s*$",
+      "nonroot_username": "root",
+      "nonroot_password": "<redacted>",
+      "nonroot_cmdline_markers": [
+        "isolcpus=3",
+        "rcu_nocb=3"
+      ]
+    }
+  }
+}

@@ -1,0 +1,6 @@
+stress-ng: info:  [842] setting to a 600 second (10 mins, 0.00 secs) run per stressor
+stress-ng: info:  [842] dispatching hogs: 1 vm
+stress-ng: info:  [842] stressor       bogo ops real time  usr time  sys time   bogo ops/s     bogo ops/s
+stress-ng: info:  [842]                           (secs)    (secs)    (secs)   (real time) (usr+sys time)
+stress-ng: info:  [842] vm              7731822    600.10    574.84     15.50     12884.23       13097.16
+stress-ng: info:  [842] successful run completed in 600.10s (10 mins, 0.10 secs)

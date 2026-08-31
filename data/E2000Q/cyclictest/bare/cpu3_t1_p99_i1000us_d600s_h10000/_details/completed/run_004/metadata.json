@@ -1,0 +1,69 @@
+{
+  "status": "completed",
+  "condition": "cpu3_t1_p99_i1000us_d600s_h10000",
+  "run_index": 1,
+  "run_count": 1,
+  "reboot_policy": "each-run",
+  "updated_at": "2026-08-19T19:02:20.462930+08:00",
+  "serial_transcript": "data/E2000Q/cyclictest/bare/cpu3_t1_p99_i1000us_d600s_h10000/_details/completed/run_004/serial.log",
+  "configuration": {
+    "platform_name": "E2000Q",
+    "serial": {
+      "port": "COM12",
+      "baudrate": 115200,
+      "bytesize": 8,
+      "parity": "N",
+      "stopbits": 1,
+      "read_timeout": 0.1,
+      "write_timeout": 2.0,
+      "show_output": true
+    },
+    "environment_name": "bare",
+    "environment": {
+      "boot_command": "run boot_oee",
+      "boot_max_attempts": 3,
+      "boot_retry_delay": 1,
+      "boot_retry_patterns": [
+        "mmc fail to send stop cmd",
+        "Wrong Image Type for bootm command",
+        "Protocol wrong type for socket",
+        "can't get kernel image"
+      ],
+      "reboot_command": "reboot",
+      "uboot_prompt": "=>\\s*$",
+      "reset_markers": [
+        "U-Boot",
+        "DDR"
+      ],
+      "login_prompt": "[A-Za-z0-9_.-]+ login:\\s*$",
+      "username": "root",
+      "shell_prompts": [
+        "root@[^\\r\\n]*#\\s*$",
+        "[A-Za-z0-9_.-]+ [^\\r\\n]*#\\s*$",
+        "#\\s*$"
+      ]
+    },
+    "experiment_name": "cyclictest",
+    "experiment": {
+      "binary": "./cyclictest",
+      "cpu": 3,
+      "threads": 1,
+      "priority": 99,
+      "interval_us": 1000,
+      "duration_seconds": 600,
+      "histogram_limit_us": 10000,
+      "grace_seconds": 60,
+      "cleanup_remote": true
+    },
+    "timeouts": {
+      "probe": 2,
+      "uboot": 60,
+      "boot": 180,
+      "login": 30
+    },
+    "reboot": {
+      "prepare_serial_environment": true,
+      "xhypass_module_cpu": 3
+    }
+  }
+}

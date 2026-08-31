@@ -1,0 +1,72 @@
+{
+  "status": "completed",
+  "condition": "cpu3_t1_p99_i1000us_d10s_h10000_stress-cpu3_vm1_256M",
+  "run_index": 1,
+  "run_count": 1,
+  "reboot_policy": "each-run",
+  "updated_at": "2026-08-19T17:36:54.465869+08:00",
+  "serial_transcript": "data/E2000Q/cyclictest-stress/xen_credit2/cpu3_t1_p99_i1000us_d10s_h10000_stress-cpu3_vm1_256M/_details/completed/run_001/serial.log",
+  "configuration": {
+    "platform_name": "E2000Q",
+    "serial": {
+      "port": "COM12",
+      "baudrate": 115200,
+      "bytesize": 8,
+      "parity": "N",
+      "stopbits": 1,
+      "read_timeout": 0.1,
+      "write_timeout": 2.0,
+      "show_output": true
+    },
+    "environment_name": "xen_credit2",
+    "environment": {
+      "environment_type": "xen",
+      "xen_serial_only": true,
+      "boot_command": "run boot_xen",
+      "boot_max_attempts": 3,
+      "boot_retry_delay": 1,
+      "boot_retry_patterns": [
+        "mmc fail to send stop cmd",
+        "Wrong Image Type for bootm command",
+        "Protocol wrong type for socket",
+        "can't get kernel image"
+      ],
+      "reboot_command": "reboot",
+      "uboot_prompt": "=>\\s*$",
+      "login_prompt": "[A-Za-z0-9_.-]+ login:\\s*$",
+      "username": "root",
+      "shell_prompts": [
+        "root@[^\\r\\n]*#\\s*$",
+        "[A-Za-z0-9_.-]+ [^\\r\\n]*#\\s*$",
+        "#\\s*$"
+      ],
+      "local_boot_files": {
+        "source_dir": "experiments/boot-artifacts/E2000Q/Xen_credit2",
+        "target_dir": "experiments/deploy/E2000Q"
+      }
+    },
+    "experiment_name": "cyclictest-stress",
+    "experiment": {
+      "binary": "./cyclictest",
+      "cpu": 3,
+      "threads": 1,
+      "priority": 99,
+      "interval_us": 1000,
+      "duration_seconds": 10,
+      "histogram_limit_us": 10000,
+      "grace_seconds": 60,
+      "cleanup_remote": true,
+      "stress_binary": "./stress-ng",
+      "stress_cpus": "3",
+      "stress_vm_workers": 1,
+      "stress_vm_bytes": "256M"
+    },
+    "timeouts": {
+      "probe": 2,
+      "uboot": 60,
+      "boot": 180,
+      "login": 30
+    },
+    "reboot": {}
+  }
+}

@@ -1,0 +1,55 @@
+name: Coverity Scan
+
+# We only want to test official release code, not every pull request.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '18 9 * * WED,SUN' # Bi-weekly at 9:18 UTC
+
+jobs:
+  coverity:
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Install build dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          build-essential \
+          git-core \
+          golang \
+          iasl \
+          libbz2-dev \
+          libext2fs-dev \
+          liblzma-dev \
+          libncurses5-dev \
+          libyajl-dev \
+          libzstd-dev \
+          ocaml \
+          ocaml-findlib \
+          python3-dev \
+          uuid-dev \
+          zlib1g-dev \
+
+    - uses: actions/checkout@v4
+      with:
+        ref: staging
+
+    - name: Configure Xen
+      run: |
+        ./configure \
+          --disable-docs \
+          --disable-stubdom \
+          --with-system-qemu=/bin/true \
+          --with-system-seabios=/bin/true \
+          --with-system-ovmf=/bin/true \
+
+    - name: Pre build stuff
+      run: |
+        make -j`nproc` mini-os-dir
+
+    - uses: vapier/coverity-scan-action@v1
+      with:
+        command: make -j`nproc` build-xen build-tools && make -j`nproc` -C extras/mini-os/
+        project: XenProject
+        email: ${{ secrets.COVERITY_SCAN_EMAIL }}
+        token: ${{ secrets.COVERITY_SCAN_TOKEN }}

@@ -1,0 +1,22 @@
+menu "Device Drivers"
+
+source "drivers/acpi/Kconfig"
+
+source "drivers/char/Kconfig"
+
+source "drivers/cpufreq/Kconfig"
+
+source "drivers/passthrough/Kconfig"
+
+source "drivers/pci/Kconfig"
+
+source "drivers/video/Kconfig"
+
+config HAS_VPCI
+	bool
+
+config HAS_VPCI_GUEST_SUPPORT
+	bool
+	select HAS_VPCI
+
+endmenu

@@ -1,0 +1,136 @@
+{
+  "status": "completed",
+  "condition": "dual-tflite-formal-v1_d600s_seed12345_workers8_ct-i1000us_h10000",
+  "run_index": 1,
+  "run_count": 1,
+  "reboot_policy": "each-run",
+  "updated_at": "2026-08-26T00:06:21.623886+08:00",
+  "serial_transcript": "data/RK3588/NN/jailhouse/dual-tflite-formal-v1_d600s_seed12345_workers8_ct-i1000us_h10000/_details/completed/run_005/serial.log",
+  "configuration": {
+    "platform_name": "TL3588",
+    "serial": {
+      "port": "COM10",
+      "baudrate": 115200,
+      "bytesize": 8,
+      "parity": "N",
+      "stopbits": 1,
+      "read_timeout": 0.1,
+      "write_timeout": 2.0,
+      "show_output": true
+    },
+    "environment_name": "jailhouse",
+    "environment": {
+      "boot_command": "run boot_oee",
+      "login_prompt": "tl3588 login:\\s*$",
+      "nonroot_login_prompt": "[A-Za-z0-9_.-]+ login:\\s*$",
+      "username": "root",
+      "rootcell_ip": "202.197.67.50",
+      "rootcell_netmask": null,
+      "module_load_command": "insmod jailhouse.ko",
+      "module_settle_seconds": 20,
+      "ssh": {
+        "host": "202.197.67.50",
+        "port": 22,
+        "username": "root",
+        "password": "<redacted>",
+        "key_file": null,
+        "connect_timeout": 60,
+        "retry_interval": 2,
+        "allow_agent": true,
+        "look_for_keys": true,
+        "progress_interval": 10
+      },
+      "enable_command": "jailhouse enable /usr/share/jailhouse/cells/tl3588.cell",
+      "linux_command": "jailhouse cell linux /usr/share/jailhouse/cells/tl3588-linux-demo.cell ./Image -d /usr/share/jailhouse/cells/dts/inmate-tl3588.dtb -i new_phytium_rootfs.cpio.gz -c \"isolcpus=3 rcu_nocb=3\"",
+      "nonroot_username": "root",
+      "nonroot_password": "<redacted>",
+      "nonroot_boot_timeout": 180,
+      "nonroot_cmdline_markers": [
+        "isolcpus=3",
+        "rcu_nocb=3"
+      ]
+    },
+    "experiment_name": "NN",
+    "experiment": {
+      "profile_name": "dual-tflite-formal-v1",
+      "duration_seconds": 600,
+      "seed": 12345,
+      "workers": 8,
+      "inception_threads": 3,
+      "mnasnet_threads": 3,
+      "rootcell_model_threads": 3,
+      "nonroot_model_threads": 3,
+      "rootcell_cyclictest_cpu": 6,
+      "nonroot_cyclictest_cpu": 3,
+      "cyclictest_interval_us": 1000,
+      "cyclictest_priority": 99,
+      "histogram_limit_us": 10000,
+      "period_seconds": 60,
+      "start_delay_seconds": 2,
+      "profiles": [
+        {
+          "name": "light",
+          "inception_qps": 0.2,
+          "peak_qps": 5,
+          "poisson_qps": 3,
+          "constant_qps": 3
+        },
+        {
+          "name": "medium",
+          "inception_qps": 0.2,
+          "peak_qps": 12,
+          "poisson_qps": 6,
+          "constant_qps": 6
+        },
+        {
+          "name": "heavy",
+          "inception_qps": 0.2,
+          "peak_qps": 20,
+          "poisson_qps": 9,
+          "constant_qps": 9
+        }
+      ],
+      "local_rootcell_script": "experiments/workloads/NN/jailhouse/run_vm1.sh",
+      "local_nonroot_script": "experiments/workloads/NN/jailhouse/run_vm2.sh",
+      "jailhouse_linux_command": "cd ~ && jailhouse cell linux ./tl3588-linux-demo.cell ./Image -d /usr/share/jailhouse/cells/dts/inmate-tl3588.dtb -i new_phytium_rootfs.cpio.gz -c \"isolcpus=3 rcu_nocb=3\"",
+      "rootcell_internal_interface": "enP1p0s3",
+      "rootcell_internal_ip": "202.197.10.50",
+      "nonroot_internal_interface": "eth0",
+      "nonroot_internal_ip": "202.197.10.51",
+      "rootcell_internal_password": "<redacted>",
+      "scp_retries": 5,
+      "scp_timeout_seconds": 600,
+      "grace_seconds": 600,
+      "cleanup_remote": true,
+      "transfer_chunk_bytes": 262144
+    },
+    "timeouts": {
+      "probe": 2,
+      "uboot": 60,
+      "boot": 180,
+      "login": 30
+    },
+    "reboot": {
+      "ssh": {
+        "host": "202.197.67.50",
+        "port": 22,
+        "username": "root",
+        "password": "<redacted>",
+        "key_file": null,
+        "connect_timeout": 8,
+        "retry_interval": 1,
+        "allow_agent": true,
+        "look_for_keys": true,
+        "progress_interval": 10
+      },
+      "allow_serial_fallback": false,
+      "nonroot_login_prompt": "[A-Za-z0-9_.-]+ login:\\s*$",
+      "nonroot_username": "root",
+      "nonroot_password": "<redacted>",
+      "nonroot_cmdline_markers": [
+        "isolcpus=3",
+        "rcu_nocb=3"
+      ]
+    }
+  }
+}
