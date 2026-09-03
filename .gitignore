@@ -6,3 +6,19 @@ experiments/deploy/
 experiments/boot-artifacts/
 plots/output/*
 !plots/output/.gitkeep
+
+# Board-local transition campaigns contain serial/SSH diagnostics and are not
+# part of the paper artifact. The validated publication dataset is in
+# data/paper/RK3588/transition/.
+data/*/transition/
+
+# Out-of-tree Linux module build products
+guest/linux/interrupt_passthrough/*.ko
+guest/linux/interrupt_passthrough/*.o
+guest/linux/interrupt_passthrough/*.mod
+guest/linux/interrupt_passthrough/*.mod.c
+guest/linux/interrupt_passthrough/.*.cmd
+guest/linux/interrupt_passthrough/Module.symvers
+guest/linux/interrupt_passthrough/modules.order
+guest/linux/interrupt_passthrough/xhypass_transition_bench
+guest/linux/interrupt_passthrough/xhypass_correctness

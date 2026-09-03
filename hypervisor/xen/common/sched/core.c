@@ -1396,6 +1396,59 @@ int vcpu_set_hard_affinity(struct vcpu *v, const cpumask_t *affinity)
     return vcpu_set_affinity(v, affinity, v->sched_unit->cpu_hard_affinity);
 }
 
+/*
+ * Validate the scheduler side of an exclusive vCPU-to-pCPU binding.
+ *
+ * This is a point-in-time validation.  The toolstack must not change vCPU
+ * affinities while an architecture-specific execution mode relies on the
+ * exclusive binding.
+ */
+int sched_check_vcpu_pcpu_exclusive(const struct vcpu *v)
+{
+    const struct sched_unit *target = v->sched_unit;
+    const unsigned int cpu = v->processor;
+    struct domain *d;
+    struct sched_unit *unit;
+    spinlock_t *lock;
+    unsigned long flags;
+    int rc = 0;
+
+    lock = unit_schedule_lock_irqsave(v->sched_unit, &flags);
+    if ( !cpumask_equal(target->cpu_hard_affinity, cpumask_of(cpu)) )
+        rc = -EINVAL;
+    unit_schedule_unlock_irqrestore(lock, flags, v->sched_unit);
+    if ( rc )
+        return rc;
+
+    rcu_read_lock(&domlist_read_lock);
+    for_each_domain ( d )
+    {
+        for_each_sched_unit ( d, unit )
+        {
+            bool conflict;
+
+            if ( unit == target )
+                continue;
+
+            lock = unit_schedule_lock_irqsave(unit, &flags);
+            conflict =
+                cpumask_test_cpu(cpu, unit->cpu_hard_affinity) &&
+                cpumask_test_cpu(cpu, VCPU2ONLINE(unit->vcpu_list));
+            unit_schedule_unlock_irqrestore(lock, flags, unit);
+            if ( conflict )
+            {
+                rc = -EBUSY;
+                goto out;
+            }
+        }
+    }
+
+ out:
+    rcu_read_unlock(&domlist_read_lock);
+
+    return rc;
+}
+
 static int vcpu_set_soft_affinity(struct vcpu *v, const cpumask_t *affinity)
 {
     return vcpu_set_affinity(v, affinity, v->sched_unit->cpu_soft_affinity);

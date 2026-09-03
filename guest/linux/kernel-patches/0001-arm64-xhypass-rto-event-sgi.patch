@@ -1,0 +1,16 @@
+diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
+index 08328ec025a8..5ad12a38ac0f 100644
+--- a/arch/arm64/kernel/smp.c
++++ b/arch/arm64/kernel/smp.c
+@@ -82,0 +83 @@ enum ipi_msg_type {
++	IPI_XHYPASS_EVENT,
+@@ -847,0 +849 @@ static const char *ipi_types[NR_IPI] __tracepoint_string = {
++	S(IPI_XHYPASS_EVENT, "XHyPass event-channel interrupts"),
+@@ -938,0 +941,2 @@ static void ipi_cpu_crash_stop(unsigned int cpu, struct pt_regs *regs)
++extern void xen_hvm_evtchn_do_upcall(void);
++
+@@ -989,0 +994,4 @@ static void do_handle_IPI(int ipinr)
++	case IPI_XHYPASS_EVENT:
++		xen_hvm_evtchn_do_upcall();
++		break;
++

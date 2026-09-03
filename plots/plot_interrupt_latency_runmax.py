@@ -5,11 +5,11 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 
-from plot_interrupt_latency_heatmap import load_run_maxima
+from xhypass_plot.interrupt_latency import load_run_maxima
+from xhypass_plot.style import apply_paper_style
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -50,26 +50,7 @@ COLORS = {
 
 
 def configure_style() -> None:
-    mpl.rcParams.update(
-        {
-            "font.family": "sans-serif",
-            "font.sans-serif": ["Arial", "Liberation Sans", "DejaVu Sans"],
-            "font.size": 8.0,
-            "axes.labelsize": 9.0,
-            "axes.titlesize": 9.0,
-            "xtick.labelsize": 8.0,
-            "ytick.labelsize": 8.0,
-            "axes.linewidth": 0.65,
-            "xtick.major.width": 0.65,
-            "ytick.major.width": 0.65,
-            "xtick.major.size": 3.0,
-            "ytick.major.size": 3.0,
-            "pdf.fonttype": 42,
-            "ps.fonttype": 42,
-            "savefig.bbox": "tight",
-            "savefig.pad_inches": 0.02,
-        }
-    )
+    apply_paper_style()
 
 
 def load_platform_maxima(

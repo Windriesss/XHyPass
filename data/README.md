@@ -6,6 +6,9 @@ experiment, and condition. Each retained `metadata.json` records the experiment
 parameters; machine-specific source and deployment paths have been converted to
 repository-relative paths.
 
-The release contains the data needed for the six documented figures. Failed
-attempts, temporary deployment files, duplicate result archives, credentials,
-and host-side serial/SSH transcripts are excluded.
+`paper/RK3588/transition/` contains the separately curated raw data, manifest,
+validation summary, and run-level analysis for the transition-latency and
+four-source transition-correctness evaluation.
+
+Failed attempts, temporary deployment files, duplicate result archives,
+credentials, and host-side serial/SSH transcripts are excluded.

@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "platform": "RK3588",
+  "run_id": "run-001",
+  "condition": "randomized-stress",
+  "scope": "Xen-dom0-Linux",
+  "transition_pairs": 1000000,
+  "notification_iterations": 10000000,
+  "watchdog_timeouts": 0,
+  "final_mode": "DYN",
+  "passed": true,
+  "notifications": {
+    "device-SPI": {
+      "produced": 10000000,
+      "consumed": 10000000,
+      "lost": 0,
+      "duplicates": 0,
+      "unexpected": 0,
+      "reordered": 0,
+      "wrong_cpu": 0,
+      "timeouts": 0
+    },
+    "SGI": {
+      "produced": 10000000,
+      "consumed": 10000000,
+      "lost": 0,
+      "duplicates": 0,
+      "unexpected": 0,
+      "reordered": 0,
+      "timeouts": 0
+    },
+    "event-channel": {
+      "produced": 10000000,
+      "consumed": 10000000,
+      "lost": 0,
+      "duplicates": 0,
+      "unexpected": 0,
+      "reordered": 0,
+      "timeouts": 0
+    }
+  },
+  "spi_timer": {
+    "device_tree_path": "/timer@feae0000",
+    "linux_irq": 42,
+    "gic_hwirq": 321,
+    "affinity_cpu": 6,
+    "timer_rate_hz": 24000000,
+    "affinity_verified": true
+  },
+  "state_cases": [
+    {
+      "name": "virtual-pending-entry",
+      "expected_rc": 0,
+      "observed_rc": 0,
+      "final_mode": "RTO",
+      "passed": true
+    },
+    {
+      "name": "physical-active-exit",
+      "expected_rc": -16,
+      "observed_rc": -16,
+      "final_mode": "RTO",
+      "passed": true
+    },
+    {
+      "name": "active-and-pending-exit",
+      "expected_rc": -11,
+      "observed_rc": -11,
+      "final_mode": "RTO",
+      "passed": true
+    }
+  ]
+}

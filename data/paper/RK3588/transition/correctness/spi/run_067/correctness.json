@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "platform": "RK3588",
+  "run_id": "run-067",
+  "condition": "spi-stress",
+  "scope": "Xen-dom0-Linux",
+  "source_mask": 8,
+  "transition_pairs": 10000,
+  "notification_iterations": 10003,
+  "watchdog_timeouts": 0,
+  "final_mode": "DYN",
+  "passed": true,
+  "transition_counters": {"enter_attempts": 10000, "enter_successes": 10000, "exit_attempts": 10000, "exit_successes": 10000, "busy_returns": 0, "again_returns": 0, "other_errors": 0, "enter_retries": 0, "exit_retries": 0},
+  "notifications": {
+    "SGI": {"skipped": true, "produced": 0, "consumed": 0, "handler_entries": 0, "lost": 0, "duplicates": 0, "unexpected": 0, "reordered": 0, "wrong_cpu": 0, "timeouts": 0},
+    "timer-PPI": {"skipped": true, "produced": 0, "consumed": 0, "handler_entries": 0, "lost": 0, "duplicates": 0, "unexpected": 0, "reordered": 0, "wrong_cpu": 0, "timeouts": 0},
+    "event-channel": {"skipped": true, "produced": 0, "consumed": 0, "handler_entries": 0, "lost": 0, "duplicates": 0, "unexpected": 0, "reordered": 0, "wrong_cpu": 0, "timeouts": 0},
+    "device-SPI": {"skipped": false, "produced": 10003, "consumed": 10003, "handler_entries": 10003, "lost": 0, "duplicates": 0, "unexpected": 0, "reordered": 0, "wrong_cpu": 0, "timeouts": 0}
+  },
+  "spi_timer": {"device_tree_path": "/timer@feae0000", "linux_irq": 80, "gic_hwirq": 321, "affinity_cpu": 6, "timer_rate_hz": 24000000, "affinity_verified": true},
+  "state_cases": [
+    {"name": "DYN-to-RTO-under-notification-load", "expected_rc": 0, "observed_rc": 0, "final_mode": "RTO", "passed": true},
+    {"name": "RTO-to-DYN-under-notification-load", "expected_rc": 0, "observed_rc": 0, "final_mode": "DYN", "passed": true}
+  ],
+  "setup_errors": 0
+}

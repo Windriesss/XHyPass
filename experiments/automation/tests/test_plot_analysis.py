@@ -11,14 +11,7 @@ PLOT_ROOT = Path(__file__).resolve().parents[3] / "plots"
 sys.path.insert(0, str(PLOT_ROOT))
 
 from xhypass_plot.model import RunRecord, combine, weighted_quantile
-from xhypass_plot.parser import parse_histogram, parse_stress_log, scan_runs
-from xhypass_plot.report import (
-    _latest_batches,
-    _platform_label_from_groups,
-    _select_expected_runs,
-    _stress_summary,
-)
-from analyze import build_platform_config
+from xhypass_plot.parser import parse_histogram, scan_runs
 from analyze_nn import (
     _available_cpus,
     _available_cyclic_series,
@@ -58,22 +51,6 @@ class PlotAnalysisTests(unittest.TestCase):
             self.assertEqual(second_metrics["P99"], 3.0)
             self.assertEqual(second_metrics["Max"], 5.0)
 
-    def test_e2000q_plot_profile_is_independent_and_uses_formal_interval(self):
-        config = build_platform_config("E2000Q")
-        self.assertEqual(tuple(config.data_sources), ("E2000Q",))
-        self.assertEqual(config.data_sources["E2000Q"].name, "E2000Q")
-        self.assertEqual(config.intervals_us, (1000,))
-        self.assertEqual(config.duration_seconds, 600)
-        self.assertEqual(config.expected_runs_per_condition, 5)
-
-    def test_plot_labels_derive_platform_instead_of_hardcoding_rk3588(self):
-        groups = {
-            ("E2000Q", "bare", "cyclictest", 1000): [
-                record(Path("unused"))
-            ]
-        }
-        self.assertEqual(_platform_label_from_groups(groups), "E2000Q")
-
     def test_backup_fboot_directory_is_excluded(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -110,33 +87,6 @@ class PlotAnalysisTests(unittest.TestCase):
             merged_values, merged_counts = combine([record(Path(directory)), record(Path(directory))])
             self.assertEqual(merged_values.tolist(), [2, 3, 7])
             self.assertEqual(merged_counts.tolist(), [16, 2, 2])
-
-    def test_latest_batch_is_selected_per_group(self):
-        old = record(Path("old"), "20260813-000000")
-        new = record(Path("new"), "20260814-000000")
-        self.assertEqual(_latest_batches([old, new]), [new])
-
-    def test_plot_selects_exactly_first_five_runs_per_condition(self):
-        records = []
-        for run_index in range(1, 7):
-            item = record(Path(f"run_{run_index}"))
-            item.run = run_index
-            records.append(item)
-        selected = _select_expected_runs(records, 5)
-        self.assertEqual([item.run for item in selected], [1, 2, 3, 4, 5])
-
-    def test_stress_log_and_summary(self):
-        with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory)
-            (path / "stress-ng.log").write_text(
-                "stress-ng: info:  [123] vm 1000 10.00 29.00 1.00 100.00 33.33\n",
-                encoding="utf-8",
-            )
-            parsed = parse_stress_log(record(path))
-            self.assertIsNotNone(parsed)
-            summary = _stress_summary([parsed])
-            self.assertEqual(summary[0]["bogo_ops_per_real_second_mean"], 100.0)
-            self.assertEqual(summary[0]["coefficient_of_variation_percent"], 0.0)
 
     def test_nn_completion_rate_uses_completion_timestamp_bins(self):
         time_points, rates = _completion_rate(

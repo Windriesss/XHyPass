@@ -2392,6 +2392,10 @@ static int gicv3_enter_rto(unsigned int event_sgi)
     stage = "validate-guest";
     if ( is_32bit_domain(v->domain) )
         return gicv3_rto_log_failure(v, "DYN->RTO", stage, -EOPNOTSUPP);
+    stage = "validate-exclusive-binding";
+    rc = sched_check_vcpu_pcpu_exclusive(v);
+    if ( rc )
+        return gicv3_rto_log_failure(v, "DYN->RTO", stage, rc);
     stage = "validate-event-sgi";
     if ( event_sgi < GIC_SGI_STATIC_MAX || event_sgi >= NR_GIC_SGI )
         return gicv3_rto_log_failure(v, "DYN->RTO", stage, -EINVAL);
@@ -2480,10 +2484,62 @@ static int gicv3_rto_phys_active(struct vcpu *v)
     return 0;
 }
 
+/*
+ * Transfer Pending-only local notifications back to the vGIC.
+ *
+ * While RTO owns local delivery, guest SGIs and PPIs use their physical
+ * INTIDs.  Leaving such a notification Pending would let Xen consume it after
+ * DYN is published; guest SGIs may even alias Xen's static SGIs.  The event
+ * SGI is only a proxy for shared event-channel state and is handled
+ * separately below.
+ */
+static bool gicv3_rto_take_local_notifications(struct vcpu *v,
+                                                unsigned long *pending_irqs)
+{
+    unsigned int irq;
+
+    ASSERT(spin_is_locked(&v->irq_mode_lock));
+    ASSERT(v->rto_event_sgi >= GIC_SGI_STATIC_MAX);
+    ASSERT(v->rto_event_sgi < NR_GIC_SGI);
+
+    bitmap_zero(pending_irqs, NR_GIC_LOCAL_IRQS);
+    for ( irq = 0; irq < NR_GIC_LOCAL_IRQS; irq++ )
+    {
+        struct irq_desc *desc = irq_to_desc(irq);
+        bool pending;
+
+        spin_lock(&desc->lock);
+        pending = gicv3_peek_irq(desc, GICD_ISPENDR);
+        if ( pending )
+            gicv3_set_pending_state(desc, false);
+        spin_unlock(&desc->lock);
+
+        if ( pending && irq != v->rto_event_sgi )
+            set_bit(irq, pending_irqs);
+    }
+
+    /* Complete physical ownership release before publishing DYN. */
+    dsb(sy);
+
+    return ACCESS_ONCE(vcpu_info(v, evtchn_upcall_pending));
+}
+
+static void gicv3_rto_inject_local_notifications(
+    struct vcpu *v, unsigned long pending_irqs)
+{
+    ASSERT(spin_is_locked(&v->irq_mode_lock));
+    ASSERT(ACCESS_ONCE(v->irq_mode) == XHYPASS_IRQ_DYN);
+
+    for_each_set_bit ( irq, pending_irqs )
+        vgic_inject_irq(v->domain, v, irq, true);
+}
+
 static int gicv3_exit_rto(void)
 {
     struct vcpu *v = current;
     DECLARE_BITMAP(enabled, NR_IRQS);
+    DECLARE_BITMAP(pending_local, NR_GIC_LOCAL_IRQS);
+    bool event_pending;
     int rc;
     const char *stage = "validate-context";
 
@@ -2512,6 +2568,8 @@ static int gicv3_exit_rto(void)
     rc = gicv3_rto_phys_active(v);
     if ( rc )
         goto abort;
+    stage = "local-notification-transfer";
+    event_pending = gicv3_rto_take_local_notifications(v, pending_local);
     gicv3_rto_phys_to_vmcr(v);
 
     WRITE_SYSREG(v->arch.rto_gic.icc_ctlr_el1, ICC_CTLR_EL1);
@@ -2525,6 +2583,9 @@ static int gicv3_exit_rto(void)
 
     smp_wmb();
     ACCESS_ONCE(v->irq_mode) = XHYPASS_IRQ_DYN;
+    gicv3_rto_inject_local_notifications(v, *pending_local);
+    if ( event_pending )
+        vgic_inject_irq(v->domain, v, v->domain->arch.evtchn_irq, true);
     gicv3_rto_unmask_irqs(v, enabled);
     v->rto_event_sgi = NR_GIC_SGI;
     rc = 0;

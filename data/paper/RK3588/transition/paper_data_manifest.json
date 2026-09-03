@@ -1,0 +1,44 @@
+{
+  "correctness": {
+    "event_timeout_ms": 1000,
+    "max_retries": 1000,
+    "producer_cpu": 0,
+    "retry_delay_us": 10,
+    "rto_cpu": 6,
+    "runs_per_source": 100,
+    "sources": [
+      "sgi",
+      "timer",
+      "event",
+      "spi"
+    ],
+    "spi_delay_us": 50,
+    "timer_delay_us": 50,
+    "transition_pairs_per_run": 10000
+  },
+  "created_utc": "2026-09-03T02:22:36.313648+00:00",
+  "latency": {
+    "condition": "idle",
+    "dwell_us": 0,
+    "independent_runs": 30,
+    "latency_definition": "caller-observed complete request latency",
+    "latency_field": "request_elapsed_ns",
+    "max_retries": 1000,
+    "retry_delay_us": 10,
+    "rto_cpu": 6,
+    "transition_pairs_per_run": 100000
+  },
+  "platform": "RK3588",
+  "schema_version": 1,
+  "scope": "Xen-dom0-Linux",
+  "source_campaign_status": {
+    "correctness": "failed",
+    "latency": "completed",
+    "spi": "completed"
+  },
+  "source_campaigns": {
+    "latency": "20260903-092206",
+    "sgi_timer_event": "20260903-093913",
+    "spi": "20260903-100836"
+  }
+}

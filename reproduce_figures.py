@@ -18,13 +18,13 @@ SCRIPTS = (
     "plot_nn_scatter_2x3.py",
     "analyze_nn.py",
 )
-EXPECTED_PDFS = (
-    "motivation_tradeoff.pdf",
-    "interrupt_latency_runmax.pdf",
-    "interrupt_latency_tail_percentiles.pdf",
-    "cyclictest_runmax.pdf",
-    "rk3588_nn_metrics_scatter_2x3.pdf",
-    "rk3588_nn_comprehensive_4x3.pdf",
+EXPECTED_OUTPUTS = (
+    "plots/output/motivation_tradeoff.pdf",
+    "plots/output/interrupt_latency_runmax.pdf",
+    "plots/output/interrupt_latency_tail_percentiles.pdf",
+    "plots/output/cyclictest_runmax.pdf",
+    "plots/output/rk3588_nn_metrics_scatter_2x3.pdf",
+    "plots/output/rk3588_nn_comprehensive_4x3.pdf",
 )
 
 
@@ -38,15 +38,26 @@ def main() -> int:
         )
 
     missing = [
-        name for name in EXPECTED_PDFS
-        if not (PLOTS_ROOT / "output" / name).is_file()
+        path for path in EXPECTED_OUTPUTS
+        if not (REPOSITORY_ROOT / path).is_file()
     ]
     if missing:
         raise RuntimeError(f"Missing expected figures: {', '.join(missing)}")
 
+    subprocess.run(
+        [
+            sys.executable,
+            "-B",
+            str(REPOSITORY_ROOT / "tools" / "check_pdf_fonts.py"),
+            *(str(REPOSITORY_ROOT / path) for path in EXPECTED_OUTPUTS),
+        ],
+        cwd=REPOSITORY_ROOT,
+        check=True,
+    )
+
     print("Reproduced figures:")
-    for name in EXPECTED_PDFS:
-        print(f"- plots/output/{name}")
+    for path in EXPECTED_OUTPUTS:
+        print(f"- {path}")
     return 0
 
 

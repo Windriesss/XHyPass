@@ -40,6 +40,7 @@ import numpy as np
 
 import nn_mixed_workload_stats_core as mixed_stats
 from xhypass_plot.parser import is_excluded_data_path, parse_histogram
+from xhypass_plot.style import apply_paper_style
 
 
 # ============================================================================
@@ -1086,18 +1087,11 @@ def _mean_completion_rate(
 def _plot_4x3(runs_by_env: dict[str, list[Path]]) -> list[Path]:
     """Plot formal NN results without exposing board-specific CPU numbers."""
     plt.style.use("seaborn-v0_8-whitegrid")
-    plt.rcParams.update(
-        {
-            "pdf.fonttype": 42,
-            "ps.fonttype": 42,
-            "font.family": "sans-serif",
-            "font.sans-serif": ["Arial", "Liberation Sans", "DejaVu Sans"],
-        }
-    )
+    apply_paper_style()
     figure, axes = plt.subplots(
         4,
         len(WORKLOADS),
-        figsize=(15.0, 9.5),
+        figsize=(15.0, 10.4),
         constrained_layout=False,
     )
     line_styles = {
@@ -1246,7 +1240,7 @@ def _plot_4x3(runs_by_env: dict[str, list[Path]]) -> list[Path]:
         right=0.992,
         top=0.955,
         bottom=0.085,
-        hspace=0.16,
+        hspace=0.30,
         wspace=0.14,
     )
 

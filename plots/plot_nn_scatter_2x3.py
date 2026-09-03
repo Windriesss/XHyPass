@@ -22,6 +22,7 @@ from analyze_nn import (
     _combine_histograms,
     _discover_latest_condition_runs,
 )
+from xhypass_plot.style import PAPER_RC
 
 
 OUTPUT_PNG = OUTPUT_ROOT / f"{PLATFORM.lower()}_nn_metrics_scatter_2x3.png"
@@ -61,18 +62,7 @@ GRID_LINEWIDTH = 0.5
 GRID_ALPHA = 0.30
 SPINE_LINEWIDTH = 0.7
 SPINE_COLOR = "0.55"
-PLOT_RC = {
-    "pdf.fonttype": 42,
-    "ps.fonttype": 42,
-    "font.family": "sans-serif",
-    "font.size": 8.5,
-    "axes.labelsize": 9.5,
-    "axes.titlesize": 11.0,
-    "axes.titleweight": "normal",
-    "xtick.labelsize": 8.5,
-    "ytick.labelsize": 8.5,
-    "legend.fontsize": 8.3,
-}
+PLOT_RC = dict(PAPER_RC)
 
 LEGEND_LABELS = {
     **LABELS,

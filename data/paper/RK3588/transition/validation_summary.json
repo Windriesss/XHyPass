@@ -1,0 +1,66 @@
+{
+  "correctness": [
+    {
+      "again_returns": 0,
+      "busy_returns": 0,
+      "consumed": 1090473,
+      "enter_retries": 0,
+      "exit_retries": 0,
+      "failed_runs": 0,
+      "independent_runs": 100,
+      "notification": "SGI",
+      "produced": 1090473,
+      "source": "sgi",
+      "transition_pairs": 1000000
+    },
+    {
+      "again_returns": 0,
+      "busy_returns": 0,
+      "consumed": 531268,
+      "enter_retries": 0,
+      "exit_retries": 0,
+      "failed_runs": 0,
+      "independent_runs": 100,
+      "notification": "timer-PPI",
+      "produced": 531268,
+      "source": "timer",
+      "transition_pairs": 1000000
+    },
+    {
+      "again_returns": 0,
+      "busy_returns": 0,
+      "consumed": 2001031,
+      "enter_retries": 0,
+      "exit_retries": 0,
+      "failed_runs": 0,
+      "independent_runs": 100,
+      "notification": "event-channel",
+      "produced": 2001031,
+      "source": "event",
+      "transition_pairs": 1000000
+    },
+    {
+      "again_returns": 14,
+      "busy_returns": 0,
+      "consumed": 1000148,
+      "enter_retries": 14,
+      "exit_retries": 0,
+      "failed_runs": 0,
+      "independent_runs": 100,
+      "notification": "device-SPI",
+      "produced": 1000148,
+      "source": "spi",
+      "transition_pairs": 1000000
+    }
+  ],
+  "latency": {
+    "again_returns": 0,
+    "busy_returns": 0,
+    "independent_runs": 30,
+    "other_errors": 0,
+    "pairs_per_run": 100000,
+    "requests": 6000000,
+    "retries": 0,
+    "rows": 6000000
+  }
+}

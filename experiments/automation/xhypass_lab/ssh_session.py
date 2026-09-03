@@ -184,8 +184,16 @@ class SSHSession:
     def get(self, remote: str, local: Path) -> None:
         if not self.client:
             raise ConnectionError("SSH session is not connected")
+        local.parent.mkdir(parents=True, exist_ok=True)
         with self.client.open_sftp() as sftp:
             sftp.get(remote, str(local))
+
+    def put(self, local: Path, remote: str) -> None:
+        """Upload one experiment artifact through the persistent session."""
+        if not self.client:
+            raise ConnectionError("SSH session is not connected")
+        with self.client.open_sftp() as sftp:
+            sftp.put(str(local), remote)
 
     def path_exists(self, remote: str) -> bool:
         """Check a remote path without adding polling noise to experiment logs."""
